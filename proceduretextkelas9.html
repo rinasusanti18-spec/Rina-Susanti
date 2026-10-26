@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procedure Text Cyber Quest - 9th Grade English</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        clay: {
+                            purple: '#6C5CE7',
+                            pink: '#FD79A8',
+                            cyan: '#00CEC9',
+                            yellow: '#FDCB6E',
+                            orange: '#E17055',
+                            lime: '#55E6C1',
+                            dark: '#2D3436',
+                            card: '#805AD5'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Fredoka', 'Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: radial-gradient(circle at center, #2b1055 0%, #7597de 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #fff;
+            user-select: none;
+        }
+
+        /* 3D Claymorphism Effect */
+        .clay-btn {
+            background: linear-gradient(145deg, #ff7675, #d63031);
+            border-radius: 20px;
+            box-shadow: 6px 6px 12px #900C3F, -4px -4px 10px #FFC300, inset 2px 2px 4px rgba(255,255,255,0.4), inset -2px -2px 4px rgba(0,0,0,0.2);
+            transition: all 0.15s ease-in-out;
+        }
+        .clay-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 8px 8px 16px #900C3F, -6px -6px 12px #FFC300, inset 2px 2px 4px rgba(255,255,255,0.6);
+        }
+        .clay-btn:active {
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 2px 2px 4px #900C3F, -2px -2px 4px #FFC300;
+        }
+
+        .clay-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            border: 4px solid rgba(255, 255, 255, 0.4);
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3), inset 0 2px 6px rgba(255,255,255,0.5), inset 0 -4px 8px rgba(0,0,0,0.2);
+        }
+
+        .clay-box {
+            background: #6c5ce7;
+            border-radius: 20px;
+            box-shadow: inset 4px 4px 8px rgba(255,255,255,0.3), inset -4px -4px 8px rgba(0,0,0,0.3), 5px 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .clay-input {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2d3436;
+            border: 3px solid #00cec9;
+            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.15);
+            border-radius: 16px;
+        }
+
+        /* Clay Mascot Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { filter: drop-shadow(0 0 15px rgba(0,206,201,0.6)); }
+            50% { filter: drop-shadow(0 0 25px rgba(253,121,168,0.9)); }
+        }
+        .glow-effect {
+            animation: pulse-glow 3s infinite;
+        }
+
+        /* Printable Certificate Styling */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #certificate-modal, #certificate-modal * {
+                visibility: visible;
+            }
+            #certificate-modal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white !important;
+                color: black !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen justify-between p-3 md:p-6 overflow-x-hidden">
+
+    <!-- Top Navigation & Score Bar -->
+    <header id="top-bar" class="w-full max-w-5xl mx-auto flex items-center justify-between p-4 clay-card mb-4 hidden">
+        <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-full bg-cyan-400 border-2 border-white flex items-center justify-center text-2xl shadow-inner">
+                <i class="fa-solid fa-robot text-purple-900"></i>
+            </div>
+            <div>
+                <h3 id="display-student-name" class="font-bold text-lg leading-tight text-cyan-300">Student Name</h3>
+                <p id="display-student-class" class="text-xs text-purple-200">Class: 9A</p>
+            </div>
+        </div>
+
+        <!-- Level Indicator -->
+        <div class="flex flex-col items-center">
+            <span class="text-xs font-semibold uppercase tracking-wider text-pink-300">Progress</span>
+            <div class="flex items-center space-x-2 mt-1">
+                <span id="current-level-badge" class="px-3 py-1 bg-yellow-400 text-purple-900 font-extrabold text-sm rounded-full shadow">LEVEL 1</span>
+            </div>
+        </div>
+
+        <!-- Score counter -->
+        <div class="flex items-center space-x-2 bg-purple-900/60 px-4 py-2 rounded-2xl border border-purple-400/40">
+            <i class="fa-solid fa-star text-yellow-300 text-xl animate-bounce"></i>
+            <span id="score-display" class="font-black text-2xl text-yellow-300 tracking-wider">0</span>
+            <span class="text-xs text-purple-200">PTS</span>
+        </div>
+
+        <!-- Audio Toggle Button -->
+        <button id="audio-toggle" onclick="toggleAudio()" class="w-10 h-10 rounded-full bg-purple-700/80 hover:bg-purple-600 flex items-center justify-center text-white border border-white/40 transition">
+            <i id="audio-icon" class="fa-solid fa-volume-high"></i>
+        </button>
+    </header>
+
+    <!-- Main Dynamic Content Container -->
+    <main class="w-full max-w-4xl mx-auto flex-1 flex flex-col justify-center items-center relative z-10">
+
+        <!-- SCREEN 1: Identity & Welcome Screen -->
+        <section id="screen-welcome" class="w-full clay-card p-6 md:p-10 text-center flex flex-col items-center">
+            <!-- 3D Clay Mascot Avatar -->
+            <div class="relative mb-4 glow-effect animate-float">
+                <div class="w-32 h-32 md:w-40 md:w-40 bg-gradient-to-tr from-pink-500 to-yellow-400 rounded-full flex items-center justify-center border-4 border-white shadow-2xl relative overflow-hidden">
+                    <svg class="w-24 h-24 text-white drop-shadow-md" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2A2 2 0 0 1 14 4V5H17A3 3 0 0 1 20 8V18A3 3 0 0 1 17 21H7A3 3 0 0 1 4 18V8A3 3 0 0 1 7 5H10V4A2 2 0 0 1 12 2M7 7A1 1 0 0 0 6 8V18A1 1 0 0 0 7 19H17A1 1 0 0 0 18 18V8A1 1 0 0 0 17 7H7M9 10A1.5 1.5 0 0 1 10.5 11.5A1.5 1.5 0 0 1 9 13A1.5 1.5 0 0 1 7.5 11.5A1.5 1.5 0 0 1 9 10M15 10A1.5 1.5 0 0 1 16.5 11.5A1.5 1.5 0 0 1 15 13A1.5 1.5 0 0 1 13.5 11.5A1.5 1.5 0 0 1 15 10M9 15H15V17H9V15Z"/>
+                    </svg>
+                </div>
+                <div class="absolute -bottom-2 -right-2 bg-cyan-400 text-purple-950 px-3 py-1 rounded-full text-xs font-bold border-2 border-white shadow">
+                    Chef Claybot v3.0
+                </div>
+            </div>
+
+            <h1 class="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-yellow-200 to-pink-300 mb-2 drop-shadow-sm">
+                PROCEDURE TEXT QUEST
+            </h1>
+            <p class="text-purple-200 text-sm md:text-base max-w-lg mb-6">
+                Uji kemampuan HOTS Bahasa Inggris kelas 9 SMP! Kuasai Manual, Resep, dan Petunjuk Petualangan Futuristik.
+            </p>
+
+            <!-- Input Form -->
+            <div class="w-full max-w-md bg-purple-950/40 p-6 rounded-2xl border border-purple-400/30 mb-6 space-y-4">
+                <div class="text-left">
+                    <label class="block text-xs font-bold text-cyan-300 uppercase tracking-wide mb-1">Nama Lengkap Siswa</label>
+                    <input type="text" id="input-name" placeholder="Masukkan nama kamu..." class="w-full px-4 py-3 clay-input focus:outline-none font-bold text-slate-800 text-base">
+                </div>
+                <div class="text-left">
+                    <label class="block text-xs font-bold text-cyan-300 uppercase tracking-wide mb-1">Kelas (9 SMP)</label>
+                    <select id="input-class" class="w-full px-4 py-3 clay-input focus:outline-none font-bold text-slate-800 text-base">
+                        <option value="9-A">Kelas 9 - A</option>
+                        <option value="9-B">Kelas 9 - B</option>
+                        <option value="9-C">Kelas 9 - C</option>
+                        <option value="9-D">Kelas 9 - D</option>
+                        <option value="9-E">Kelas 9 - E</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="startMission()" class="clay-btn px-8 py-4 bg-gradient-to-r from-lime-400 to-emerald-500 text-purple-950 font-black text-xl rounded-2xl shadow-xl flex items-center space-x-3 transform transition active:scale-95">
+                <span>MULAI PETUALANGAN</span>
+                <i class="fa-solid fa-rocket"></i>
+            </button>
+        </section>
+
+        <!-- SCREEN 2: Game Mission Area -->
+        <section id="screen-game" class="w-full clay-card p-5 md:p-8 hidden flex flex-col">
+            <!-- Header Questions Info -->
+            <div class="flex justify-between items-center mb-4 border-b border-purple-300/20 pb-3">
+                <span id="level-title-display" class="font-extrabold text-cyan-300 text-lg md:text-xl flex items-center gap-2">
+                    <i class="fa-solid fa-scroll"></i> Level Title
+                </span>
+                <span id="question-type-badge" class="px-3 py-1 bg-pink-500/80 text-white rounded-xl text-xs font-bold uppercase tracking-wider">
+                    Pilihan Ganda
+                </span>
+            </div>
+
+            <!-- Reading Material / Passage Card -->
+            <div id="passage-container" class="bg-purple-950/60 p-4 rounded-2xl border border-cyan-400/40 mb-5 text-sm md:text-base leading-relaxed text-purple-100 shadow-inner max-h-56 overflow-y-auto">
+                <p id="passage-text" class="italic">Loading passage...</p>
+            </div>
+
+            <!-- Question Prompt -->
+            <div class="mb-5">
+                <h4 id="question-prompt" class="font-bold text-base md:text-xl text-yellow-200">
+                    Question goes here?
+                </h4>
+            </div>
+
+            <!-- Interactive Answer Area (Dynamic) -->
+            <div id="options-container" class="w-full grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                <!-- Dynamic choices injected via JS -->
+            </div>
+
+            <!-- Submit / Next Button Container -->
+            <div class="flex justify-between items-center mt-auto pt-4 border-t border-purple-300/20">
+                <div id="feedback-mascot" class="flex items-center space-x-2 text-xs md:text-sm font-semibold text-purple-200">
+                    <i class="fa-solid fa-lightbulb text-yellow-400 text-lg"></i>
+                    <span id="mascot-hint">Baca teks dengan teliti sebelum menjawab!</span>
+                </div>
+                <button id="btn-submit" onclick="checkAnswer()" class="clay-btn px-6 py-3 bg-gradient-to-r from-cyan-400 to-blue-500 text-purple-950 font-black text-base md:text-lg rounded-xl flex items-center space-x-2">
+                    <span>PERIKSA JAWABAN</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: Level Complete Transition Modal -->
+        <div id="level-complete-modal" class="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+            <div class="clay-card p-8 max-w-md w-full text-center flex flex-col items-center">
+                <div class="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center text-purple-900 text-4xl mb-3 shadow-lg animate-bounce">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h3 class="text-2xl font-black text-yellow-300 mb-1">LEVEL SELESAI!</h3>
+                <p id="level-score-info" class="text-purple-200 text-sm mb-4">Kamu mendapatkan +20 Poin!</p>
+                <button onclick="nextLevel()" class="clay-btn px-6 py-3 bg-lime-400 text-purple-950 font-black text-lg rounded-xl w-full">
+                    LANJUTKAN MISI <i class="fa-solid fa-circle-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: Certificate Result Screen -->
+        <section id="screen-certificate" class="w-full clay-card p-6 md:p-8 text-center hidden flex flex-col items-center">
+            <div id="certificate-content" class="w-full bg-white text-slate-800 p-6 md:p-10 rounded-2xl border-8 border-yellow-400 shadow-2xl relative text-left my-2 overflow-hidden">
+                <!-- Certificate Background Graphic -->
+                <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-yellow-100 rounded-full opacity-50 pointer-events-none"></div>
+                <div class="absolute -left-12 -top-12 w-48 h-48 bg-cyan-100 rounded-full opacity-50 pointer-events-none"></div>
+                
+                <div class="text-center border-b-4 border-dashed border-purple-300 pb-4 mb-6">
+                    <div class="inline-block px-3 py-1 bg-purple-900 text-yellow-300 font-extrabold text-xs rounded-full uppercase tracking-widest mb-2">
+                        OFFICIAL CERTIFICATE OF ACHIEVEMENT
+                    </div>
+                    <h2 class="text-2xl md:text-4xl font-extrabold text-purple-900 tracking-tight">SERTIFIKAT PENGHARGAAN</h2>
+                    <p class="text-xs md:text-sm text-slate-500 font-medium mt-1">Pembelajaran Bahasa Inggris Kelas 9 SMP - Procedure Text Master</p>
+                </div>
+
+                <div class="text-center space-y-3">
+                    <p class="text-xs md:text-sm text-slate-600 uppercase tracking-wider font-semibold">Diberikan Kepada Siswa Terbaik:</p>
+                    <h1 id="cert-name" class="text-2xl md:text-4xl font-black text-cyan-600 underline decoration-yellow-400">NAMA SISWA</h1>
+                    <p id="cert-class" class="text-sm md:text-base text-slate-700 font-bold">Kelas: 9-A</p>
+
+                    <p class="text-xs md:text-sm text-slate-600 max-w-lg mx-auto pt-2">
+                        Telah berhasil menyelesaikan 5 Level Tantangan HOTS (Higher Order Thinking Skills) pada materi <i>Procedure Text (Recipes, Manuals, & Directions)</i> dengan predikat:
+                    </p>
+
+                    <div class="my-4 inline-block px-6 py-3 bg-gradient-to-r from-purple-800 to-indigo-900 text-white rounded-2xl shadow-lg transform rotate-1">
+                        <span class="text-xs block text-purple-200 uppercase font-semibold">PREDIKAT KELULUSAN</span>
+                        <span id="cert-grade" class="text-2xl md:text-3xl font-black text-yellow-300">AMAT BAIK</span>
+                    </div>
+
+                    <div class="flex justify-center items-center space-x-8 pt-2">
+                        <div>
+                            <span class="block text-xs text-slate-400 font-bold">SKOR TOTAL</span>
+                            <span id="cert-score" class="text-2xl font-black text-emerald-600">100 / 100</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs text-slate-400 font-bold">TANGGAL</span>
+                            <span id="cert-date" class="text-sm font-bold text-slate-700">26/10/2026</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certificate Footer -->
+                <div class="mt-8 flex justify-between items-end border-t pt-4 text-xs text-slate-500">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-award text-3xl text-yellow-500"></i>
+                        <div>
+                            <p class="font-bold text-slate-700">English Cyber Academy</p>
+                            <p class="text-[10px]">Verifikasi Digital: 9SMP-PROC-2026</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-serif italic text-sm font-bold text-purple-900">Chef Claybot AI</div>
+                        <p class="text-[10px] border-t border-slate-300 pt-1">Instruktur Master Bahasa Inggris</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certificate Action Buttons -->
+            <div class="flex flex-wrap justify-center gap-4 mt-6 no-print">
+                <button onclick="window.print()" class="clay-btn px-6 py-3 bg-cyan-400 text-purple-950 font-black rounded-xl flex items-center space-x-2">
+                    <i class="fa-solid fa-print"></i>
+                    <span>CETAK / SIMPAN SERTIFIKAT</span>
+                </button>
+                <button onclick="restartGame()" class="clay-btn px-6 py-3 bg-pink-500 text-white font-black rounded-xl flex items-center space-x-2">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>MAIN LAGI</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full text-center text-xs text-purple-300/80 py-3 no-print">
+        <p>Interactive Cyber Procedure Text Game • Bahasa Inggris Kelas 9 SMP</p>
+    </footer>
+
+    <!-- Audio Synth (Web Audio API) Script -->
+    <script>
+        // Web Audio API Sound Effects Synthesizer
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            initAudio();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.setValueAtTime(180, now + 0.15);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'win') {
+                // Happy fanfare chime
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.frequency.setValueAtTime(freq, now + idx * 0.12);
+                    g.gain.setValueAtTime(0.25, now + idx * 0.12);
+                    g.gain.linearRampToValueAtTime(0.01, now + idx * 0.12 + 0.3);
+                    o.start(now + idx * 0.12);
+                    o.stop(now + idx * 0.12 + 0.3);
+                });
+            }
+        }
+
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('audio-icon');
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high';
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-red-400';
+            }
+        }
+    </script>
+
+    <!-- Game Logic & HOTS Content Script -->
+    <script>
+        // Game State Variables
+        let studentData = { name: '', class: '' };
+        let currentLevelIndex = 0;
+        let totalScore = 0;
+        let selectedOptions = []; // Stores user selection for current question
+
+        // HOTS Procedure Text Questions (Grade 9 English Standard)
+        const gameLevels = [
+            {
+                level: 1,
+                title: "Level 1: Recipe Rush - The Secret Smoothie",
+                type: "single", // Pilihan Ganda Standard HOTS
+                passage: `<b>How to Make a Cyber Boost Berry Smoothie</b><br>
+                <b>Ingredients:</b> 1 cup frozen blueberries, 1 banana, 1/2 cup almond milk, 1 tbsp honey.<br>
+                <b>Steps:</b><br>
+                1. First, <u>(X)</u> all the fruits under clean running water.<br>
+                2. Next, peel the banana and slice it into smaller pieces.<br>
+                3. Then, put the sliced banana, blueberries, and almond milk into the high-speed blender container.<br>
+                4. After that, blend the ingredients on high power for 45 seconds until smooth.<br>
+                5. Finally, pour the smoothie into a tall glass and add honey on top before serving.`,
+                question: "What is the most suitable action verb to complete step (X), and what is the MAIN PURPOSE of washing the fruits first?",
+                options: [
+                    { id: 'A', text: "Wash; to remove dirt and ensure hygiene before blending.", correct: true },
+                    { id: 'B', text: "Boil; to make the fruits soft before placing into blender.", correct: false },
+                    { id: 'C', text: "Freeze; to make the fruit icy cold immediately.", correct: false },
+                    { id: 'D', text: "Cut; to divide the fruit into equal smaller halves.", correct: false }
+                ],
+                hint: "Perhatikan kata kunci kebersihan makanan pada konteks resep buah segar!"
+            },
+            {
+                level: 2,
+                title: "Level 2: Tech Fixer - Cyber Drone Manual",
+                type: "multiple", // Pilihan Majemuk HOTS (Select ALL correct)
+                passage: `<b>OPERATING MANUAL: CYBER DRONE X-900</b><br>
+                1. Charge the drone battery fully before the initial flight.<br>
+                2. <b>DO NOT</b> operate the drone near high-voltage power lines or during heavy rainy storms.<br>
+                3. Always calibrate the GPS signal in an open outdoor area prior to takeoff.<br>
+                4. Press the red emergency button ONLY when collision is imminent to cut motor power immediately.`,
+                question: "Based on the manual above, select ALL IMPERATIVE SAFETY INSTRUCTIONS that prevent equipment damage or crashes (Choose 2 correct statements):",
+                options: [
+                    { id: 'A', text: "Avoid flying the drone near high-voltage power lines or during rain.", correct: true },
+                    { id: 'B', text: "Press the red emergency button at all times during flight.", correct: false },
+                    { id: 'C', text: "Calibrate the GPS positioning system in an open space before takeoff.", correct: true },
+                    { id: 'D', text: "Fly the drone indoors with low battery for safety testing.", correct: false }
+                ],
+                hint: "Pilih DUA opsi yang berisi petunjuk keselamatan (safety instructions) yang benar!"
+            },
+            {
+                level: 3,
+                title: "Level 3: Sequence Master - Assembly Logic",
+                type: "sequence", // Menjodohkan / Urutan Sekuensial HOTS
+                passage: `<b>Task: Arrange the Cyber Chef Robot Setup in Logical Sequence</b><br>
+                Berikut adalah langkah acak pengoperasian Robot Chef. Urutkan dengan memilih nomor urut yang benar!`,
+                question: "Urutkan langkah-langkah di bawah agar menjadi Procedure Text yang logis:",
+                items: [
+                    { id: 's1', text: "Plug the power cable into the electric socket.", correctPos: 1 },
+                    { id: 's2', text: "Select your desired recipe program from the touchscreen menu.", correctPos: 2 },
+                    { id: 's3', text: "Place raw ingredients into the designated robot cooking bowl.", correctPos: 3 },
+                    { id: 's4', text: "Finally, press START and wait for the robot to complete cooking.", correctPos: 4 }
+                ],
+                hint: "Urutkan dari langkah persiapan listrik awal hingga penekanan tombol START!"
+            },
+            {
+                level: 4,
+                title: "Level 4: Myth Buster - Energy Saver Guide",
+                type: "true_false", // Benar / Salah HOTS
+                passage: `<b>HOW TO EFFICIENTLY SAVE HOME ENERGY</b><br>
+                To minimize electrical waste, always turn off electronics from the main socket rather than leaving them in standby mode. Standby power continuously draws electricity ("phantom load"). Additionally, set your air conditioner temperature at 24°C-25°C for optimal efficiency.`,
+                question: "Analyze statement: <i>'Leaving appliances on standby mode completely stops electricity usage.'</i> Is this statement TRUE or FALSE based on the procedure text?",
+                options: [
+                    { id: 'TRUE', text: "TRUE (Benar)", correct: false },
+                    { id: 'FALSE', text: "FALSE (Salah - Standby mode still draws phantom power electricity)", correct: true }
+                ],
+                hint: "Analisis kata 'phantom load' pada teks di atas!"
+            },
+            {
+                level: 5,
+                title: "Level 5: Master Engineer - Security Protocol",
+                type: "single", // Mixed HOTS Critical evaluation
+                passage: `<b>SECURITY MANUAL: CHANGING YOUR PASSWORD</b><br>
+                1. Log into your account portal.<br>
+                2. Navigate to 'Account Settings' and select 'Security'.<br>
+                3. Enter your current password once.<br>
+                4. Type a new strong password containing uppercase, lowercase, numbers, and symbols.<br>
+                5. Re-type the new password to confirm.<br>
+                6. Click 'Save Changes' and re-login on all active devices.`,
+                question: "What is the IMPLICIT CONFLICT or RISK if a user skips step 5 (Re-typing the new password)?",
+                options: [
+                    { id: 'A', text: "The computer system will immediately shut down automatically.", correct: false },
+                    { id: 'B', text: "The user might accidentally set a mistyped password without realizing it, locking themselves out.", correct: true },
+                    { id: 'C', text: "The internet connection speed will decrease significantly.", correct: false },
+                    { id: 'D', text: "The old password will remain valid forever without changing.", correct: false }
+                ],
+                hint: "Pikirkan dampak logis (implicit outcome) jika konfirmasi ketik ulang kata sandi dilewati!"
+            }
+        ];
+
+        // START MISSION
+        function startMission() {
+            const nameInput = document.getElementById('input-name').value.trim();
+            const classInput = document.getElementById('input-class').value;
+
+            if (!nameInput) {
+                alert("Silakan masukkan nama lengkap kamu terlebih dahulu!");
+                return;
+            }
+
+            studentData.name = nameInput;
+            studentData.class = classInput;
+
+            document.getElementById('display-student-name').innerText = studentData.name;
+            document.getElementById('display-student-class').innerText = "Kelas: " + studentData.class;
+
+            playSound('click');
+
+            // UI Transition
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('top-bar').classList.remove('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+
+            loadLevel(0);
+        }
+
+        // LOAD LEVEL DATA
+        function loadLevel(index) {
+            currentLevelIndex = index;
+            selectedOptions = [];
+            const levelData = gameLevels[index];
+
+            // Update Header & Badge
+            document.getElementById('current-level-badge').innerText = `LEVEL ${levelData.level} / 5`;
+            document.getElementById('level-title-display').innerHTML = `<i class="fa-solid fa-gamepad text-cyan-300"></i> ${levelData.title}`;
+            
+            const typeBadge = document.getElementById('question-type-badge');
+            if(levelData.type === 'single') typeBadge.innerText = 'Pilihan Ganda';
+            else if(levelData.type === 'multiple') typeBadge.innerText = 'Pilihan Majemuk (Centang 2)';
+            else if(levelData.type === 'sequence') typeBadge.innerText = 'Mengurutkan Sekuensial';
+            else if(levelData.type === 'true_false') typeBadge.innerText = 'Benar / Salah';
+
+            // Fill Content
+            document.getElementById('passage-text').innerHTML = levelData.passage;
+            document.getElementById('question-prompt').innerText = levelData.question;
+            document.getElementById('mascot-hint').innerText = levelData.hint;
+
+            // Render Options
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            if (levelData.type === 'single' || levelData.type === 'true_false' || levelData.type === 'multiple') {
+                container.className = "w-full grid grid-cols-1 md:grid-cols-2 gap-3 mb-6";
+                levelData.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = `option-btn w-full p-4 rounded-xl text-left border-2 border-purple-400/50 bg-purple-900/60 hover:bg-purple-800 transition flex items-start space-x-3 font-medium text-sm md:text-base`;
+                    btn.dataset.id = opt.id;
+                    btn.onclick = () => selectOption(opt.id, levelData.type, btn);
+                    
+                    btn.innerHTML = `
+                        <div class="w-6 h-6 rounded-lg bg-purple-700 border border-purple-300 flex items-center justify-center text-xs font-bold text-cyan-300 flex-shrink-0 mt-0.5 opt-check">
+                            ${opt.id}
+                        </div>
+                        <span class="text-purple-100">${opt.text}</span>
+                    `;
+                    container.appendChild(btn);
+                });
+            } else if (levelData.type === 'sequence') {
+                // Render Sequence Drag/Select order UI
+                container.className = "w-full flex flex-col space-y-3 mb-6";
+                levelData.items.forEach((item, idx) => {
+                    const div = document.createElement('div');
+                    div.className = `p-3 bg-purple-900/80 rounded-xl border border-purple-400/40 flex items-center justify-between text-sm md:text-base`;
+                    div.innerHTML = `
+                        <span class="text-purple-100 flex-1 pr-2">${item.text}</span>
+                        <select data-item-id="${item.id}" class="seq-select bg-purple-950 text-yellow-300 font-bold px-3 py-1.5 rounded-lg border border-cyan-400 focus:outline-none">
+                            <option value="">Urutan?</option>
+                            <option value="1">Langkah 1</option>
+                            <option value="2">Langkah 2</option>
+                            <option value="3">Langkah 3</option>
+                            <option value="4">Langkah 4</option>
+                        </select>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+        }
+
+        // OPTION SELECTION LOGIC
+        function selectOption(id, type, element) {
+            playSound('click');
+
+            if (type === 'single' || type === 'true_false') {
+                selectedOptions = [id];
+                document.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.classList.remove('border-cyan-400', 'bg-cyan-900/60', 'ring-2', 'ring-cyan-300');
+                    btn.classList.add('bg-purple-900/60');
+                });
+                element.classList.remove('bg-purple-900/60');
+                element.classList.add('border-cyan-400', 'bg-cyan-900/60', 'ring-2', 'ring-cyan-300');
+            } else if (type === 'multiple') {
+                if (selectedOptions.includes(id)) {
+                    selectedOptions = selectedOptions.filter(item => item !== id);
+                    element.classList.remove('border-cyan-400', 'bg-cyan-900/60', 'ring-2', 'ring-cyan-300');
+                    element.classList.add('bg-purple-900/60');
+                } else {
+                    if (selectedOptions.length >= 2) {
+                        alert("Pilih maksimal 2 opsi untuk pertanyaan majemuk ini!");
+                        return;
+                    }
+                    selectedOptions.push(id);
+                    element.classList.remove('bg-purple-900/60');
+                    element.classList.add('border-cyan-400', 'bg-cyan-900/60', 'ring-2', 'ring-cyan-300');
+                }
+            }
+        }
+
+        // CHECK ANSWER LOGIC
+        function checkAnswer() {
+            const levelData = gameLevels[currentLevelIndex];
+            let isCorrect = false;
+
+            if (levelData.type === 'single' || levelData.type === 'true_false') {
+                if (selectedOptions.length === 0) {
+                    alert("Silakan pilih salah satu jawaban!");
+                    return;
+                }
+                const correctOpt = levelData.options.find(o => o.correct);
+                if (selectedOptions[0] === correctOpt.id) {
+                    isCorrect = true;
+                }
+            } else if (levelData.type === 'multiple') {
+                if (selectedOptions.length < 2) {
+                    alert("Silakan pilih 2 jawaban yang menurutmu benar!");
+                    return;
+                }
+                const correctIds = levelData.options.filter(o => o.correct).map(o => o.id);
+                isCorrect = selectedOptions.length === correctIds.length && 
+                            selectedOptions.every(val => correctIds.includes(val));
+            } else if (levelData.type === 'sequence') {
+                const selects = document.querySelectorAll('.seq-select');
+                let userOrders = [];
+                let hasEmpty = false;
+
+                selects.forEach(s => {
+                    const val = parseInt(s.value);
+                    if (!val) hasEmpty = true;
+                    userOrders.push({
+                        id: s.dataset.itemId,
+                        userPos: val
+                    });
+                });
+
+                if (hasEmpty) {
+                    alert("Silakan lengkapi urutan semua langkah!");
+                    return;
+                }
+
+                // Verify sequence correctness
+                isCorrect = userOrders.every(u => {
+                    const original = levelData.items.find(item => item.id === u.id);
+                    return original.correctPos === u.userPos;
+                });
+            }
+
+            // FEEDBACK & SCORING
+            if (isCorrect) {
+                playSound('correct');
+                totalScore += 20; // 20 pts per level = 100 max
+                document.getElementById('score-display').innerText = totalScore;
+
+                // Confetti animation
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+
+                // Show modal
+                document.getElementById('level-score-info').innerText = "Luar biasa! Jawaban kamu benar (+20 Poin)";
+                document.getElementById('level-complete-modal').classList.remove('hidden');
+            } else {
+                playSound('wrong');
+                alert("Jawaban belum tepat. Coba tinjau kembali petunjuk Chef Claybot dan periksa teks prosedur!");
+            }
+        }
+
+        // NEXT LEVEL TRANSITION
+        function nextLevel() {
+            playSound('click');
+            document.getElementById('level-complete-modal').classList.add('hidden');
+
+            if (currentLevelIndex + 1 < gameLevels.length) {
+                loadLevel(currentLevelIndex + 1);
+            } else {
+                // Game Finished - Generate Certificate
+                finishGame();
+            }
+        }
+
+        // FINISH GAME & DISPLAY CERTIFICATE
+        function finishGame() {
+            playSound('win');
+            document.getElementById('top-bar').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-certificate').classList.remove('hidden');
+
+            // Populate Certificate
+            document.getElementById('cert-name').innerText = studentData.name.toUpperCase();
+            document.getElementById('cert-class').innerText = "Kelas: " + studentData.class;
+            document.getElementById('cert-score').innerText = `${totalScore} / 100`;
+
+            // Date Formatting
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('cert-date').innerText = dateStr;
+
+            // Grade Criteria Determination
+            const gradeBadge = document.getElementById('cert-grade');
+            if (totalScore >= 90) {
+                gradeBadge.innerText = "AMAT BAIK";
+                gradeBadge.className = "text-2xl md:text-3xl font-black text-yellow-300";
+            } else if (totalScore >= 70) {
+                gradeBadge.innerText = "BAIK";
+                gradeBadge.className = "text-2xl md:text-3xl font-black text-cyan-300";
+            } else {
+                gradeBadge.innerText = "CUKUP";
+                gradeBadge.className = "text-2xl md:text-3xl font-black text-orange-300";
+            }
+
+            confetti({
+                particleCount: 150,
+                spread: 100,
+                origin: { y: 0.4 }
+            });
+        }
+
+        // RESTART GAME
+        function restartGame() {
+            playSound('click');
+            totalScore = 0;
+            currentLevelIndex = 0;
+            document.getElementById('score-display').innerText = '0';
+            document.getElementById('screen-certificate').classList.add('hidden');
+            document.getElementById('screen-welcome').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
